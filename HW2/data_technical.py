@@ -11,8 +11,8 @@ DATA_PATH = PATH + DATA_FILENAME
 SELECTED_FEATURES_PATH = PATH + "rawSelectedFeatures.csv"
 
 # constants
-global_train_size = 0.75
-global_validation_size = 0.10
+global_train_size = 0.50
+global_validation_size = 0.25
 global_test_size = 1 - global_train_size - global_validation_size
 global_z_threshold = 4.5
 global_correlation_threshold = 0.9
@@ -21,7 +21,7 @@ label = 'Vote'
 
 total_features = ['Vote', 'Occupation_Satisfaction',
                 'Avg_monthly_expense_when_under_age_21',
-                'AVG_lottary_expanses',
+                'Avg_lottary_expanses',
                 'Most_Important_Issue', 'Avg_Satisfaction_with_previous_vote',
                 'Looking_at_poles_results',
                 'Garden_sqr_meter_per_person_in_residancy_area', 'Married',
@@ -46,7 +46,7 @@ total_features = ['Vote', 'Occupation_Satisfaction',
 
 labeless_features = ['Occupation_Satisfaction',
                           'Avg_monthly_expense_when_under_age_21',
-                          'AVG_lottary_expanses',
+                          'Avg_lottary_expanses',
                           'Most_Important_Issue',
                           'Avg_Satisfaction_with_previous_vote',
                           'Looking_at_poles_results',
@@ -85,7 +85,7 @@ nominal_features = ['Most_Important_Issue', 'Looking_at_poles_results',
 
 numerical_features = ['Occupation_Satisfaction',
                       'Avg_monthly_expense_when_under_age_21',
-                      'AVG_lottary_expanses',
+                      'Avg_lottary_expanses',
                       'Avg_Satisfaction_with_previous_vote',
                       'Garden_sqr_meter_per_person_in_residancy_area',
                       'Financial_balance_score_(0-1)', '%Of_Household_Income',
@@ -171,5 +171,7 @@ def load_data(filepath: str) -> DataFrame:
     df = pd.read_csv(filepath, header=0)
     return df
 
+
 if __name__ == '__main__':
     load_data(path)
+
