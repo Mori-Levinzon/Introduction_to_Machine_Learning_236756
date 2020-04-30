@@ -3,6 +3,8 @@ from pandas import DataFrame
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # dir
 PATH = path.dirname(path.realpath(__file__)) + "/"
@@ -11,8 +13,8 @@ DATA_PATH = PATH + DATA_FILENAME
 SELECTED_FEATURES_PATH = PATH + "rawSelectedFeatures.csv"
 
 # constants
-global_train_size = 0.50
-global_validation_size = 0.25
+global_train_size = 0.60
+global_validation_size = 0.20
 global_test_size = 1 - global_train_size - global_validation_size
 global_z_threshold = 4.5
 global_correlation_threshold = 0.9
@@ -159,7 +161,8 @@ def categorize_data(df: DataFrame):
     for curr_column in object_columns:#iterate over columns
         df[curr_column] = df[curr_column].astype("category")
         # change categories to int values
-        df[curr_column + '_Int'] = df[curr_column].cat.rename_categories(range(df[curr_column].nunique())).astype('int')
+        # should have ".astype('int32')"
+        df[curr_column + '_Int'] = df[curr_column].cat.rename_categories(range(df[curr_column].nunique()))
         df.loc[df[curr_column].isna(), curr_column + '_Int'] = np.nan  # fix NaN conversion
         df[curr_column] = df[curr_column + '_Int']
         '_Int'
@@ -171,7 +174,54 @@ def load_data(filepath: str) -> DataFrame:
     df = pd.read_csv(filepath, header=0)
     return df
 
+def heat_map(df: DataFrame):
+    plt.close('all')
+    plt.subplots(figsize=(28, 32))
+    corr_matrix = df.corr()
+    sns.heatmap(corr_matrix, square=False, annot=True, fmt='.1f', vmax=1.0, vmin=-1.0, cmap="RdBu", linewidths=2).set_title(
+        'Correlation Matrix')
+    plt.yticks(rotation=0)
+    plt.xticks(rotation=90)
+    plt.savefig("graphic_analysis/heatmap.png")
+    plt.show()
+
+
+def features_histograms(df: DataFrame):
+    plt.close('all')
+    local_all_features = list(df.keys())
+    for f in local_all_features:
+        plt.title(f)
+        plt.hist(df[f].values)
+        plt.savefig("histograms/{}.png".format(f))
+        plt.show()
+
+
+def data_information():
+    df = load_data(DATA_PATH)
+    # categorized nominal attributes to int
+    df = categorize_data(df)
+    # features_histograms(df)
+    heat_map(df)
+
+def feature_label_relationship():
+    df = load_data(DATA_PATH)
+    # categorized nominal attributes to int
+    df = categorize_data(df)
+    y_df = df[label]
+    x_df = df.drop(label, axis=1)
+    plt.close('all')
+    local_all_features = sorted(list(x_df.keys()))
+    print("label map: {}".format({'Blues': 0, 'Browns': 1, 'Greens': 2, 'Greys': 3, 'Khakis': 4, 'Oranges': 5, 'Pinks': 6,
+                                  'Purples': 7, 'Reds': 8, 'Turquoises': 9, 'Violets': 10, 'Whites': 11, 'Yellows': 12}))
+    for f in local_all_features:
+        print(f)
+        plt.scatter(x_df[f], y_df)
+        plt.ylabel(label, color='b')
+        plt.xlabel(f)
+        plt.savefig("graphic_analysis/{}.png".format(label + "_Vs._" + f))
+        plt.show()
+
 
 if __name__ == '__main__':
-    load_data(path)
-
+    # data_information()
+    feature_label_relationship()

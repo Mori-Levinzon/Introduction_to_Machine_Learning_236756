@@ -1,5 +1,6 @@
 from HW2.data_technical import *
 from HW2.selected_features import *
+from HW2.relief import *
 from pandas import DataFrame
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
@@ -32,10 +33,20 @@ def main():
     # imputation
     x_train, x_val, x_test = imputations(x_train, x_val, x_test, y_train, y_val, y_test)
 
+    # our relief for bonus task
+    selected_features_relief = relief(pd.concat([x_train, x_val]).copy(), pd.concat([y_train, y_val]).copy(), nominal_features,
+                                      numerical_features, 1000, 1)
+    print("Relief algorithm selected features are: {}".format(selected_features_relief))
+
     # normalization (scaling)
     x_train, x_val, x_test = normalization(x_train, x_val, x_test)
 
     # feature selection
+    # our SFS for bonus task
+    selected_features_svm, selected_features_knn = run_sfs_base_clfs(x_train, y_train, x_val, y_val, x_test, y_test)
+    print("for SVM SFS selected features are: {}".format(selected_features_svm))
+    print("for KNN SFS selected features are: {}".format(selected_features_knn))
+
 
     # filter method
     selected_numerical_features_by_variance = variance_filter(x_train[numerical_features], y_train,
@@ -89,7 +100,7 @@ def fill_feature_correlation(data: DataFrame, correlation_dict: dict):
 
 def closest_fit_imputation(ref_data: DataFrame, data_to_fill: DataFrame):
     for index, row in data_to_fill[data_to_fill.isnull().any(axis=1)].iterrows():
-        print("index - ", index, ": row - ", row)
+        # print("index - ", index, ": row - ", row)
         row.fillna(ref_data.iloc[closest_fit(ref_data, row, nominal_features, numerical_features)], inplace=True)
 
 
@@ -224,11 +235,13 @@ def remove_outlier_values(x_train: DataFrame, x_val: DataFrame, x_test: DataFram
 
 def change_negative_to_null(x_train: DataFrame, x_val: DataFrame, x_test: DataFrame) -> (
 DataFrame, DataFrame, DataFrame):
-
-    x_train[x_train < 0] = np.nan
-    x_val[x_val < 0] = np.nan
-    x_test[x_test < 0] = np.nan
-
+    for feature in numerical_features:
+        x_train.loc[(~x_train[feature].isnull()) & (
+                x_train[feature] < 0), feature] = np.nan
+        x_val.loc[(~x_val[feature].isnull()) & (
+                x_val[feature] < 0), feature] = np.nan
+        x_test.loc[(~x_test[feature].isnull()) & (
+                x_test[feature] < 0), feature] = np.nan
     return x_train, x_val, x_test
 
 
