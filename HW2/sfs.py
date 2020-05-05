@@ -5,7 +5,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 
-def sfs_algo(x_train: DataFrame, y_train: DataFrame, clf, subset_size: int = None):
+def sfs_alg(x_train: DataFrame, y_train: DataFrame, clf, subset_size: int = None):
     """
     :param x_train: DataFrame
     :param y_train: labels
@@ -39,13 +39,13 @@ def sfs_algo(x_train: DataFrame, y_train: DataFrame, clf, subset_size: int = Non
     return subset_selected_features
 
 
-def run_sfs_base_clfs(x_train: DataFrame, y_train: DataFrame, x_test: DataFrame, y_test: DataFrame, x_val: DataFrame, y_val: DataFrame):
+def run_sfs_base_classifiers(x_train: DataFrame, y_train: DataFrame, x_test: DataFrame, y_test: DataFrame, x_val: DataFrame, y_val: DataFrame):
     # examine sfs algorithm with SVM
     dtc = SGDClassifier(random_state=92, max_iter=1000, tol=1e-3)
     score_before_sfs = score(x_train, y_train, dtc)
     print("SVM Classifier accuracy score before SFS is: {}".format(score_before_sfs))
 
-    selected_features_dtc = sfs_algo(x_train, y_train, dtc)
+    selected_features_dtc = sfs_alg(x_train, y_train, dtc)
     print("SVM Classifier selected features are: {}".format(selected_features_dtc))
 
     score_after_sfs = score(x_train[selected_features_dtc], y_train, dtc)
@@ -57,7 +57,7 @@ def run_sfs_base_clfs(x_train: DataFrame, y_train: DataFrame, x_test: DataFrame,
     score_before_sfs = score(x_train, y_train, knn)
     print("K Neighbors Classifier score before SFS is: {}".format(score_before_sfs))
 
-    selected_features_knn = sfs_algo(x_train, y_train, knn)
+    selected_features_knn = sfs_alg(x_train, y_train, knn)
     print("K Neighbors Classifier selected features are: {}".format(selected_features_knn))
 
     score_after_sfs = score(x_train[selected_features_knn], y_train, knn)

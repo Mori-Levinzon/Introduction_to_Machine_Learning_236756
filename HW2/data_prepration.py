@@ -1,6 +1,7 @@
 from HW2.data_technical import *
 from HW2.selected_features import *
 from HW2.relief import *
+from HW2.sfs import *
 from pandas import DataFrame
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
@@ -43,7 +44,7 @@ def main():
 
     # feature selection
     # our SFS for bonus task
-    selected_features_svm, selected_features_knn = run_sfs_base_clfs(x_train, y_train, x_val, y_val, x_test, y_test)
+    selected_features_svm, selected_features_knn = run_sfs_base_classifiers(x_train, y_train, x_val, y_val, x_test, y_test)
     print("for SVM SFS selected features are: {}".format(selected_features_svm))
     print("for KNN SFS selected features are: {}".format(selected_features_knn))
 
